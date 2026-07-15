@@ -1,0 +1,44 @@
+.skeleton {
+  background-color: var(--surface-color);
+  background-image: linear-gradient(
+    90deg,
+    var(--surface-color) 0px,
+    #1b2436 40px,
+    var(--surface-color) 80px
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--border-radius-sm);
+  display: inline-block;
+  width: 100%;
+}
+
+/* Variantes */
+.text {
+  height: 16px;
+  margin-bottom: 8px;
+  border-radius: var(--border-radius-sm);
+}
+
+.title {
+  height: 32px;
+  margin-bottom: 16px;
+  border-radius: var(--border-radius-sm);
+}
+
+.rect {
+  border-radius: var(--border-radius-md);
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
