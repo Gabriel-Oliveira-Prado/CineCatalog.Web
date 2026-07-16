@@ -421,7 +421,7 @@ const MovieDetails = () => {
                       variant="primary"
                       isLoading={addReviewMutation.isPending}
                     >
-                      Enviar Avaliação
+                      {addReviewMutation.isPending ? 'Enviando Avaliação' : 'Enviar Avaliação'}
                     </Button>
                   </form>
                 </div>

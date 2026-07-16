@@ -5,11 +5,14 @@ import { AlertCircle, Film } from 'lucide-react';
 import api from '../../services/api';
 import { Button, Card, Skeleton } from '../../components/ui';
 import MovieCard from '../../components/MovieCard/MovieCard';
+import { useAuth } from '../../context/AuthContext';
 import styles from './Home.module.css';
 
 const HIGHLIGHTS_PAGE_SIZE = 12;
 
 const Home = () => {
+  const { isAuthenticated } = useAuth();
+
   // Busca os filmes mais recentes cadastrados no catálogo (sem repetição, direto da API paginada)
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['movies', 'home-highlights'],
@@ -42,9 +45,11 @@ const Home = () => {
           <Link to="/catalogo">
             <Button variant="primary">Explorar Catálogo</Button>
           </Link>
-          <Link to="/login">
-            <Button variant="outline">Entrar na Conta</Button>
-          </Link>
+          {!isAuthenticated && (
+            <Link to="/login">
+              <Button variant="outline">Entrar na Conta</Button>
+            </Link>
+          )}
         </div>
       </section>
 

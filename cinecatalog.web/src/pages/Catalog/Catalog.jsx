@@ -11,7 +11,7 @@ const Catalog = () => {
   // Estados de busca e paginação
   const [searchInput, setSearchInput] = useState('');
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(30);
+  const [pageSize] = useState(100);
   const [showFilters, setShowFilters] = useState(false);
 
   // Estados de filtros

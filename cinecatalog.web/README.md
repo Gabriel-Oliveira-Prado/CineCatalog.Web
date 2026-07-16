@@ -2,6 +2,8 @@
 
 Interface moderna e responsiva para a CineCatalog API, desenvolvida com **React 19**, **Vite** e estilização via **CSS Modules**. O design adota a identidade visual "Cinema à noite" com tons profundos de azul-tinta, detalhes em dourado "luz de marquise" e perfurações decorativas de filme de 35mm como assinatura visual.
 
+Este projeto consome a [CineCatalog API](https://github.com/Gabriel-Oliveira-Prado/CineCatalog-API).
+
 ---
 
 ## 🎨 Identidade Visual & Design System

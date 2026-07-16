@@ -74,6 +74,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -119,7 +120,7 @@
 /* Grid de Exibição */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 30px;
   margin-bottom: 48px;
 }
@@ -205,18 +206,18 @@
   .controlsRow {
     flex-direction: column;
   }
-  
+
   .toggleFiltersBtn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .filtersPanel {
     grid-template-columns: 1fr;
   }
-  
+
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 20px;
   }
 }

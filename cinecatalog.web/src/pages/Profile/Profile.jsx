@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -15,9 +15,9 @@ import styles from './Profile.module.css';
 const profileSchema = z.object({
   name: z
     .string()
-    .min(1, 'O nome é obrigatório.')
-    .min(3, 'O nome deve ter pelo menos 3 caracteres.')
-    .max(100, 'O nome não pode exceder 100 caracteres.'),
+    .min(1, 'O nome de usuário é obrigatório.')
+    .min(3, 'O nome de usuário deve ter pelo menos 3 caracteres.')
+    .max(60, 'O nome de usuário não pode exceder 60 caracteres.'),
   email: z
     .string()
     .min(1, 'O e-mail é obrigatório.')
@@ -25,7 +25,6 @@ const profileSchema = z.object({
   avatarUrl: z
     .string()
     .trim()
-    .url('Informe uma URL de imagem válida.')
     .optional()
     .or(z.literal('')),
 });
@@ -74,36 +73,39 @@ const Profile = () => {
 
   const avatarUrlPreview = watch('avatarUrl');
   
+  const fileInputRef = useRef(null);
+
   const handleAvatarClick = () => {
-    Swal.fire({
-      title: 'Alterar foto de perfil',
-      input: 'url',
-      inputLabel: 'Insira a URL da sua nova foto de perfil',
-      inputValue: watch('avatarUrl') || '',
-      placeholder: 'https://exemplo.com/foto.jpg',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--primary-color)',
-      cancelButtonColor: 'var(--color-error)',
-      confirmButtonText: 'Salvar',
-      cancelButtonText: 'Cancelar',
-      background: 'var(--surface-color)',
-      color: 'var(--text-main)',
-      inputValidator: (value) => {
-        if (value && !value.startsWith('http')) {
-          return 'Insira uma URL válida!';
-        }
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const newUrl = result.value || '';
-        setValue('avatarUrl', newUrl);
-        updateProfileMutation.mutate({
-          name: watch('name'),
-          email: watch('email'),
-          avatarUrl: newUrl || null,
-        });
-      }
-    });
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tamanho (max 2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('Por favor, selecione uma imagem de até 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result;
+      setValue('avatarUrl', base64String);
+      updateProfileMutation.mutate({
+        name: watch('name'),
+        email: watch('email'),
+        avatarUrl: base64String || null,
+      });
+    };
+    reader.onerror = () => {
+      toast.error('Erro ao ler o arquivo.');
+    };
+    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
@@ -197,6 +199,13 @@ const Profile = () => {
         {/* Sidebar com Avatar e Data de Ingresso */}
         <div className={styles.sidebarCard}>
           <div className={styles.avatarContainer} onClick={handleAvatarClick} title="Clique para alterar a foto de perfil">
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
             <div className={styles.avatar}>
               {avatarUrlPreview && !avatarImgError ? (
                 <img
@@ -250,10 +259,11 @@ const Profile = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
             <Input
-              label="Nome Completo"
-              placeholder="Digite seu nome"
+              label="Nome de Usuário"
+              placeholder="Digite seu nome de usuário"
               leftIcon={<User size={18} />}
               error={errors.name?.message}
+              maxLength={60}
               {...register('name')}
             />
 

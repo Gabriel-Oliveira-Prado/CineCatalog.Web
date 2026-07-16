@@ -12,9 +12,9 @@ import styles from './Register.module.css';
 const registerSchema = z.object({
   name: z
     .string()
-    .min(1, 'O nome é obrigatório.')
-    .min(3, 'O nome deve ter pelo menos 3 caracteres.')
-    .max(100, 'O nome não pode exceder 100 caracteres.'),
+    .min(1, 'O nome de usuário é obrigatório.')
+    .min(3, 'O nome de usuário deve ter pelo menos 3 caracteres.')
+    .max(60, 'O nome de usuário não pode exceder 60 caracteres.'),
   email: z
     .string()
     .min(1, 'O e-mail é obrigatório.')
@@ -92,10 +92,11 @@ const Register = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
           <Input
-            label="Nome Completo"
-            placeholder="Digite seu nome"
+            label="Nome de Usuário"
+            placeholder="Digite seu nome de usuário"
             leftIcon={<User size={18} />}
             error={errors.name?.message}
+            maxLength={60}
             {...register('name')}
           />
 
