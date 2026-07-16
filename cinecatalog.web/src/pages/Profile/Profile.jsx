@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMutation } from '@tanstack/react-query';
-import { User, Mail, Calendar, Save, Image as ImageIcon, KeyRound } from 'lucide-react';
+import { User, Mail, Calendar, Save, KeyRound, Camera } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -53,6 +54,7 @@ const Profile = () => {
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(profileSchema),
@@ -71,6 +73,38 @@ const Profile = () => {
   } = useForm({ resolver: zodResolver(passwordSchema) });
 
   const avatarUrlPreview = watch('avatarUrl');
+  
+  const handleAvatarClick = () => {
+    Swal.fire({
+      title: 'Alterar foto de perfil',
+      input: 'url',
+      inputLabel: 'Insira a URL da sua nova foto de perfil',
+      inputValue: watch('avatarUrl') || '',
+      placeholder: 'https://exemplo.com/foto.jpg',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--primary-color)',
+      cancelButtonColor: 'var(--color-error)',
+      confirmButtonText: 'Salvar',
+      cancelButtonText: 'Cancelar',
+      background: 'var(--surface-color)',
+      color: 'var(--text-main)',
+      inputValidator: (value) => {
+        if (value && !value.startsWith('http')) {
+          return 'Insira uma URL válida!';
+        }
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newUrl = result.value || '';
+        setValue('avatarUrl', newUrl);
+        updateProfileMutation.mutate({
+          name: watch('name'),
+          email: watch('email'),
+          avatarUrl: newUrl || null,
+        });
+      }
+    });
+  };
 
   useEffect(() => {
     setAvatarImgError(false);
@@ -162,17 +196,23 @@ const Profile = () => {
       <div className={styles.profileGrid}>
         {/* Sidebar com Avatar e Data de Ingresso */}
         <div className={styles.sidebarCard}>
-          <div className={styles.avatar}>
-            {avatarUrlPreview && !avatarImgError ? (
-              <img
-                src={avatarUrlPreview}
-                alt={`Foto de perfil de ${user?.name || 'usuário'}`}
-                className={styles.avatarImg}
-                onError={() => setAvatarImgError(true)}
-              />
-            ) : (
-              getInitials(user?.name)
-            )}
+          <div className={styles.avatarContainer} onClick={handleAvatarClick} title="Clique para alterar a foto de perfil">
+            <div className={styles.avatar}>
+              {avatarUrlPreview && !avatarImgError ? (
+                <img
+                  src={avatarUrlPreview}
+                  alt={`Foto de perfil de ${user?.name || 'usuário'}`}
+                  className={styles.avatarImg}
+                  onError={() => setAvatarImgError(true)}
+                />
+              ) : (
+                getInitials(user?.name)
+              )}
+              <div className={styles.avatarOverlay}>
+                <Camera size={18} />
+                <span>Alterar</span>
+              </div>
+            </div>
           </div>
           <h3 className={styles.userName}>{user?.name || 'Carregando...'}</h3>
           <p className={styles.userEmail}>{user?.email || ''}</p>
@@ -226,15 +266,7 @@ const Profile = () => {
               {...register('email')}
             />
 
-            <Input
-              label="URL da foto de perfil"
-              type="url"
-              placeholder="https://exemplo.com/minha-foto.jpg"
-              leftIcon={<ImageIcon size={18} />}
-              helperText="Cole o link de uma imagem hospedada (ex: Imgur, Cloudinary). Deixe em branco para usar suas iniciais."
-              error={errors.avatarUrl?.message}
-              {...register('avatarUrl')}
-            />
+
 
             <div className={styles.actions}>
               <Button

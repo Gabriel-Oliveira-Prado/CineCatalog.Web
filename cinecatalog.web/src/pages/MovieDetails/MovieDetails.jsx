@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Star, Clock, Calendar, User, Film, AlertCircle, Edit, Trash2, Heart, ArrowLeft } from 'lucide-react';
+import { Star, Clock, Calendar, User, Film, AlertCircle, Edit, Trash2, Heart, ArrowLeft, Play } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
@@ -23,6 +23,7 @@ const MovieDetails = () => {
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState('');
   const [heartPulse, setHeartPulse] = useState(0);
+  const [isPlayModalOpen, setIsPlayModalOpen] = useState(false);
 
   // 1. Busca os detalhes do filme (incluindo reviews e gêneros)
   const { data: movie, isLoading, isError, error } = useQuery({
@@ -219,6 +220,39 @@ const MovieDetails = () => {
   const embedTrailerUrl = getYouTubeEmbedUrl(movie.trailerUrl);
   const formattedRating = movie.averageRating > 0 ? movie.averageRating.toFixed(1) : 'N/A';
 
+  const getRatingStyle = (rating) => {
+    const cleanRating = rating?.toString().replace('+', '').trim().toUpperCase();
+    switch (cleanRating) {
+      case 'L':
+      case 'LIVRE':
+        return { backgroundColor: '#00A859', color: '#FFFFFF' };
+      case '10':
+        return { backgroundColor: '#0F9FD7', color: '#FFFFFF' };
+      case '12':
+        return { backgroundColor: '#ECC31F', color: '#FFFFFF' };
+      case '14':
+        return { backgroundColor: '#E87C24', color: '#FFFFFF' };
+      case '16':
+        return { backgroundColor: '#E11A22', color: '#FFFFFF' };
+      case '18':
+        return { backgroundColor: '#1D1D1B', color: '#FFFFFF' };
+      default:
+        return { backgroundColor: 'var(--accent-color)', color: 'var(--text-dark)' };
+    }
+  };
+
+  const getStreamingPlatforms = (platformsJson) => {
+    if (!platformsJson) return [];
+    try {
+      return JSON.parse(platformsJson);
+    } catch (e) {
+      console.error('Erro ao processar JSON de plataformas de streaming:', e);
+      return [];
+    }
+  };
+
+  const streamingPlatforms = getStreamingPlatforms(movie.streamingPlatforms);
+
   return (
     <div className={`page-fade-in ${styles.container}`}>
       {/* Botão flutuante para voltar */}
@@ -251,7 +285,7 @@ const MovieDetails = () => {
             
             <div className={styles.metaRow}>
               {movie.rating && (
-                <span className={styles.ratingBadge}>{movie.rating}</span>
+                <span className={styles.ratingBadge} style={getRatingStyle(movie.rating)}>{movie.rating}</span>
               )}
               <div className={styles.metaItem}>
                 <Calendar size={16} />
@@ -298,6 +332,15 @@ const MovieDetails = () => {
               ))}
             </div>
           </div>
+
+          {/* Botão de Play Grande e Redondo Transparente no canto direito */}
+          <button 
+            className={styles.playButton} 
+            onClick={() => setIsPlayModalOpen(true)} 
+            title="Assistir Filme"
+          >
+            <Play size={28} fill="currentColor" style={{ marginLeft: '4px' }} />
+          </button>
         </div>
       </section>
 
@@ -559,6 +602,43 @@ const MovieDetails = () => {
             </div>
           </form>
         )}
+      </Modal>
+
+      {/* Modal Onde Assistir (Play) */}
+      <Modal
+        isOpen={isPlayModalOpen}
+        onClose={() => setIsPlayModalOpen(false)}
+        title="Onde Assistir"
+        size="sm"
+      >
+        <div className={styles.platformsContainer}>
+          {streamingPlatforms && streamingPlatforms.length > 0 ? (
+            <>
+              <p className={styles.platformsSubtitle}>Disponível nas seguintes plataformas:</p>
+              <div className={styles.platformsList}>
+                {streamingPlatforms.map((platform, idx) => (
+                  <div key={idx} className={styles.platformItem}>
+                    <span className={styles.platformName}>{platform.name}</span>
+                    <a
+                      href={platform.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.platformPlayBtn}
+                    >
+                      <Play size={12} fill="currentColor" />
+                      <span>Acessar</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <Film size={36} style={{ color: 'var(--text-muted)', marginBottom: '12px', opacity: 0.5 }} />
+              <p style={{ color: 'var(--text-muted)' }}>Este filme não está disponível em plataformas de streaming no momento.</p>
+            </div>
+          )}
+        </div>
       </Modal>
     </div>
   );

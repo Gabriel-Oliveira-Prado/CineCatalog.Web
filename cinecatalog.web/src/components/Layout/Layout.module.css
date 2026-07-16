@@ -58,7 +58,8 @@
   transition: color var(--transition-fast);
 }
 
-.navLink:hover, .navLink.active {
+.navLink:hover,
+.navLink.active {
   color: var(--text-main);
 }
 
@@ -129,11 +130,14 @@
   .nav {
     gap: 16px;
   }
-  
-  .navLink span, .loginBtn span, .logoutBtn span {
-    display: none; /* Em telas pequenas mostra apenas ícones */
+
+  .navLink span,
+  .loginBtn span,
+  .logoutBtn span {
+    display: none;
+    /* Em telas pequenas mostra apenas ícones */
   }
-  
+
   .loginBtn {
     padding: 8px;
   }

@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Film, Heart, User, LogIn, LogOut } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { useAuth } from '../../context/AuthContext';
 import { Spinner } from '../ui';
 import styles from './Layout.module.css';
@@ -11,8 +12,23 @@ const Layout = () => {
   const { user, isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    Swal.fire({
+      title: 'Deseja realmente sair?',
+      text: 'Você precisará fazer login novamente para acessar seus favoritos e avaliações.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--primary-color)',
+      cancelButtonColor: 'var(--color-error)',
+      confirmButtonText: 'Sim, sair!',
+      cancelButtonText: 'Cancelar',
+      background: 'var(--surface-color)',
+      color: 'var(--text-main)',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        navigate('/');
+      }
+    });
   };
 
   const isActive = (path) => location.pathname === path;
@@ -30,10 +46,10 @@ const Layout = () => {
           <Link to="/" className={styles.logo}>
             CINE<span>CATALOG</span>
           </Link>
-          
+
           <nav className={styles.nav}>
-            <Link 
-              to="/catalogo" 
+            <Link
+              to="/catalogo"
               className={`${styles.navLink} ${isActive('/catalogo') ? styles.active : ''}`}
             >
               <Film size={18} />
@@ -42,15 +58,15 @@ const Layout = () => {
 
             {isAuthenticated ? (
               <>
-                <Link 
-                  to="/favoritos" 
+                <Link
+                  to="/favoritos"
                   className={`${styles.navLink} ${isActive('/favoritos') ? styles.active : ''}`}
                 >
                   <Heart size={18} />
                   <span>Favoritos</span>
                 </Link>
-                <Link 
-                  to="/perfil" 
+                <Link
+                  to="/perfil"
                   className={`${styles.navLink} ${isActive('/perfil') ? styles.active : ''}`}
                 >
                   <User size={18} />
@@ -62,8 +78,8 @@ const Layout = () => {
                 </button>
               </>
             ) : (
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className={`${styles.loginBtn} ${isActive('/login') ? styles.active : ''}`}
               >
                 <LogIn size={18} />
