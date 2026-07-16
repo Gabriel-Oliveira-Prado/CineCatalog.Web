@@ -104,11 +104,11 @@ const Layout = () => {
           </div>
         </div>
         <div className={`container ${styles.footerContent}`}>
+          <span className={styles.logo}>
+            CINE<span>CATALOG</span>
+          </span>
           <p className={styles.copy}>
             &copy; {new Date().getFullYear()} CineCatalog. Todos os direitos reservados.
-          </p>
-          <p className={styles.sub}>
-            Sua noite de cinema começa aqui.
           </p>
         </div>
       </footer>

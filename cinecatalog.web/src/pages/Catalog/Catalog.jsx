@@ -36,8 +36,12 @@ const Catalog = () => {
     queryKey: ['genres'],
     queryFn: async () => {
       const response = await api.get('/api/Genres');
-      // A API retorna no formato { value: Genre[], Count: number }
-      return response.data?.value || [];
+      // Suporta tanto array puro (contrato do Swagger) quanto um possível wrapper { value: [...] }
+      const data = response.data;
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.value)) return data.value;
+      if (Array.isArray(data?.items)) return data.items;
+      return [];
     },
   });
 

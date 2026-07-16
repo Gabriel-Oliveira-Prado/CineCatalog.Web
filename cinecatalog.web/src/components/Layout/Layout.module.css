@@ -125,13 +125,6 @@
   color: var(--text-muted);
 }
 
-.sub {
-  font-size: 0.8rem;
-  color: var(--primary-color);
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
 @media (max-width: 768px) {
   .nav {
     gap: 16px;

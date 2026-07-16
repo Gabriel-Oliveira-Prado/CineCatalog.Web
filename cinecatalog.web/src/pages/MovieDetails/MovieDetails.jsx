@@ -22,6 +22,7 @@ const MovieDetails = () => {
   const [editingReview, setEditingReview] = useState(null);
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState('');
+  const [heartPulse, setHeartPulse] = useState(0);
 
   // 1. Busca os detalhes do filme (incluindo reviews e gêneros)
   const { data: movie, isLoading, isError, error } = useQuery({
@@ -54,7 +55,7 @@ const MovieDetails = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['favorites']);
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
       toast.success(isFavorited ? 'Removido dos favoritos!' : 'Adicionado aos favoritos!');
     },
     onError: (err) => {
@@ -69,7 +70,7 @@ const MovieDetails = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['movie', id]);
+      queryClient.invalidateQueries({ queryKey: ['movie', id] });
       setCommentInput('');
       setRatingInput(5);
       toast.success('Avaliação enviada com sucesso!');
@@ -86,7 +87,7 @@ const MovieDetails = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['movie', id]);
+      queryClient.invalidateQueries({ queryKey: ['movie', id] });
       setIsEditing(false);
       setEditingReview(null);
       toast.success('Avaliação atualizada!');
@@ -102,7 +103,7 @@ const MovieDetails = () => {
       await api.delete(`/api/Movies/${id}/reviews/${reviewId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['movie', id]);
+      queryClient.invalidateQueries({ queryKey: ['movie', id] });
       toast.success('Avaliação removida.');
     },
     onError: (err) => {
@@ -270,9 +271,19 @@ const MovieDetails = () => {
             {isAuthenticated && (
               <Button
                 variant={isFavorited ? 'primary' : 'secondary'}
-                onClick={() => toggleFavoriteMutation.mutate()}
-                leftIcon={<Heart size={16} fill={isFavorited ? 'currentColor' : 'none'} />}
-                isLoading={toggleFavoriteMutation.isLoading}
+                onClick={() => {
+                  setHeartPulse((n) => n + 1);
+                  toggleFavoriteMutation.mutate();
+                }}
+                leftIcon={
+                  <Heart
+                    key={heartPulse}
+                    size={16}
+                    fill={isFavorited ? 'currentColor' : 'none'}
+                    className={heartPulse > 0 ? styles.heartPulse : undefined}
+                  />
+                }
+                isLoading={toggleFavoriteMutation.isPending}
                 style={{ marginTop: '12px' }}
               >
                 {isFavorited ? 'Favoritado' : 'Adicionar aos Favoritos'}
@@ -365,7 +376,7 @@ const MovieDetails = () => {
                     <Button
                       type="submit"
                       variant="primary"
-                      isLoading={addReviewMutation.isLoading}
+                      isLoading={addReviewMutation.isPending}
                     >
                       Enviar Avaliação
                     </Button>
@@ -541,7 +552,7 @@ const MovieDetails = () => {
               <Button
                 type="submit"
                 variant="primary"
-                isLoading={updateReviewMutation.isLoading}
+                isLoading={updateReviewMutation.isPending}
               >
                 Salvar Alterações
               </Button>

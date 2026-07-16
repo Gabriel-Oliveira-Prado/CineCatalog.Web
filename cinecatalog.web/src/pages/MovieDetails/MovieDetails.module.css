@@ -353,6 +353,21 @@
   margin-bottom: 8px;
 }
 
+.heartPulse {
+  animation: heartPulse 0.45s ease;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.5); }
+  60% { transform: scale(0.85); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heartPulse { animation: none; }
+}
+
 .reviewComment {
   color: var(--text-main);
   font-size: 0.95rem;
