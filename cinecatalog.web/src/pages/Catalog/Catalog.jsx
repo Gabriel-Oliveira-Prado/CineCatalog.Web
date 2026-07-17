@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, SlidersHorizontal, Trash2, Film, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Input, Button, Card, Skeleton } from '../../components/ui';
+import { Input, Button, Card, Skeleton, Spinner } from '../../components/ui';
 import MovieCard from '../../components/MovieCard/MovieCard';
 import styles from './Catalog.module.css';
 
@@ -46,7 +46,7 @@ const Catalog = () => {
   });
 
   // Query para buscar a lista de Filmes com paginação e filtros
-  const { data: moviesData, isLoading, isError, error } = useQuery({
+  const { data: moviesData, isLoading, isError, error, isFetching } = useQuery({
     queryKey: [
       'movies', 
       debouncedSearch, 
@@ -230,6 +230,13 @@ const Catalog = () => {
               </Button>
             </div>
           )}
+        </div>
+      )}
+
+      {isFetching && searchInput && (
+        <div className={styles.searchingTmdbAlert}>
+          <Spinner size="sm" variant="accent" className={styles.spinnerMini} />
+          <span>Buscando na base do TMDb e sincronizando com o catálogo para "<strong>{searchInput}</strong>"... Novos filmes podem aparecer a qualquer momento.</span>
         </div>
       )}
 

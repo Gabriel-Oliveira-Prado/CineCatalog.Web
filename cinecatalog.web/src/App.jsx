@@ -24,7 +24,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="cadastro" element={<Register />} />
           <Route path="catalogo" element={<Catalog />} />
-          <Route path="filme/:id" element={<MovieDetails />} />
+          <Route path="filme/:id/:slug?" element={<MovieDetails />} />
           
           {/* Rotas Privadas (Protegidas) */}
           <Route 

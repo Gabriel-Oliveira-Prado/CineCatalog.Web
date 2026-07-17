@@ -126,6 +126,7 @@ const Layout = () => {
           <p className={styles.copy}>
             &copy; {new Date().getFullYear()} CineCatalog. Todos os direitos reservados.
           </p>
+
         </div>
       </footer>
     </div>

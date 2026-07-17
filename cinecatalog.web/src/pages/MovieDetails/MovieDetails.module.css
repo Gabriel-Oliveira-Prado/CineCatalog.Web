@@ -309,6 +309,15 @@
   margin-bottom: 12px;
 }
 
+.reviewAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(76, 95, 213, 0.2);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
 .reviewUser {
   font-weight: 700;
   color: var(--text-main);
@@ -523,4 +532,38 @@
 .platformPlayBtn:hover {
   background-color: var(--accent-hover, #f3b95f);
   transform: scale(1.03);
+}
+
+.platformAvailability {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.78rem;
+  margin-top: 3px;
+}
+
+.platformsLoading,
+.platformsEmpty {
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 8px;
+  text-align: center;
+}
+
+.platformsEmpty svg {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.platformsEmpty span,
+.platformsAttribution {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.platformsAttribution {
+  margin-top: 18px;
+  text-align: center;
 }

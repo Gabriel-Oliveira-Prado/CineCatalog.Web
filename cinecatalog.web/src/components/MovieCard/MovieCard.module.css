@@ -89,6 +89,24 @@
   z-index: 2;
 }
 
+.reviewedBadge {
+  align-items: center;
+  background-color: rgba(19, 103, 72, 0.92);
+  border: 1px solid rgba(178, 255, 215, 0.22);
+  border-radius: var(--border-radius-sm);
+  color: #d2ffe7;
+  display: flex;
+  font-size: 0.7rem;
+  font-weight: 800;
+  gap: 4px;
+  left: 12px;
+  padding: 4px 7px;
+  position: absolute;
+  text-transform: uppercase;
+  top: 12px;
+  z-index: 2;
+}
+
 .content {
   padding: 12px;
   display: flex;

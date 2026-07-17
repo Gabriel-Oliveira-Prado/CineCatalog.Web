@@ -44,6 +44,16 @@ const MovieDetails = () => {
     enabled: isAuthenticated, // Só roda se logado
   });
 
+  // 3. Busca a disponibilidade de streaming sob demanda quando o modal for aberto
+  const { data: streamingAvailability, isLoading: isStreamingLoading } = useQuery({
+    queryKey: ['streaming-platforms', id],
+    queryFn: async () => {
+      const response = await api.get(`/api/Movies/${id}/streaming-platforms`);
+      return response.data;
+    },
+    enabled: isPlayModalOpen,
+  });
+
   const isFavorited = favorites.some((fav) => fav.id === id);
 
   // Mutation: Alternar Favorito
@@ -251,7 +261,35 @@ const MovieDetails = () => {
     }
   };
 
-  const streamingPlatforms = getStreamingPlatforms(movie.streamingPlatforms);
+  const streamingPlatforms = streamingAvailability?.platforms || getStreamingPlatforms(movie?.streamingPlatforms);
+
+  const formatTimeDifference = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return 'agora mesmo';
+    if (diffMins < 60) return `há ${diffMins} ${diffMins === 1 ? 'minuto' : 'minutos'}`;
+    if (diffHours < 24) return `há ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
+    return `há ${diffDays} ${diffDays === 1 ? 'dia' : 'dias'}`;
+  };
+
+  const formatReviewDate = (review) => {
+    const createdDate = new Date(review.createdAt);
+    const formattedCreated = createdDate.toLocaleDateString('pt-BR');
+    
+    if (review.updatedAt) {
+      const updatedDate = new Date(review.updatedAt);
+      if (Math.abs(updatedDate.getTime() - createdDate.getTime()) > 1000) {
+        return `${formattedCreated} (Editado ${formatTimeDifference(review.updatedAt)})`;
+      }
+    }
+    
+    return formattedCreated;
+  };
 
   return (
     <div className={`page-fade-in ${styles.container}`}>
@@ -465,14 +503,21 @@ const MovieDetails = () => {
                   return (
                     <div key={review.id} className={styles.reviewCard}>
                       <div className={styles.reviewHeader}>
-                        <div>
-                          <p className={styles.reviewUser}>
-                            {review.userName} {isOwner && <span style={{ fontSize: '0.75rem', color: 'var(--primary-color)', marginLeft: '4px', backgroundColor: 'rgba(76, 95, 213, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>Você</span>}
-                          </p>
-                          <span className={styles.reviewMeta}>
-                            {new Date(review.createdAt).toLocaleDateString('pt-BR')}
-                            {review.updatedAt && ' (Editado)'}
-                          </span>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <img
+                            src={review.userAvatarUrl || '/default-avatar.png'}
+                            alt={`Avatar de ${review.userName}`}
+                            className={styles.reviewAvatar}
+                            onError={(e) => { e.target.src = '/default-avatar.png'; }}
+                          />
+                          <div>
+                            <p className={styles.reviewUser}>
+                              {review.userName} {isOwner && <span style={{ fontSize: '0.75rem', color: 'var(--primary-color)', marginLeft: '4px', backgroundColor: 'rgba(76, 95, 213, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>Você</span>}
+                            </p>
+                            <span className={styles.reviewMeta}>
+                              {formatReviewDate(review)}
+                            </span>
+                          </div>
                         </div>
 
                         {isOwner && (
@@ -612,7 +657,12 @@ const MovieDetails = () => {
         size="sm"
       >
         <div className={styles.platformsContainer}>
-          {streamingPlatforms && streamingPlatforms.length > 0 ? (
+          {isStreamingLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '30px 0', gap: '12px' }}>
+              <Spinner size="md" variant="accent" />
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Buscando plataformas atualizadas...</p>
+            </div>
+          ) : streamingPlatforms && streamingPlatforms.length > 0 ? (
             <>
               <p className={styles.platformsSubtitle}>Disponível nas seguintes plataformas:</p>
               <div className={styles.platformsList}>
@@ -620,7 +670,7 @@ const MovieDetails = () => {
                   <div key={idx} className={styles.platformItem}>
                     <span className={styles.platformName}>{platform.name}</span>
                     <a
-                      href={platform.url}
+                      href={platform.link || platform.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.platformPlayBtn}

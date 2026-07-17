@@ -1,7 +1,8 @@
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Film, Clock, Calendar, User } from 'lucide-react';
+import { Star, Film, Clock, Calendar, User, BadgeCheck } from 'lucide-react';
 import styles from './MovieCard.module.css';
+import { slugify } from '../../utils/slugify';
 
 const MovieCard = ({ movie }) => {
   const [imageError, setImageError] = useState(false);
@@ -13,13 +14,20 @@ const MovieCard = ({ movie }) => {
   const genresToShow = movie.genres || [];
 
   return (
-    <Link to={`/filme/${movie.id}`} className={styles.card}>
+    <Link to={`/filme/${movie.id}/${slugify(movie.title)}`} className={styles.card}>
       <div className={styles.posterWrapper}>
         {/* Badge de Nota */}
         <div className={styles.ratingBadge}>
           <Star size={14} fill={movie.averageRating > 0 ? 'currentColor' : 'none'} />
           <span>{formattedRating}</span>
         </div>
+
+        {movie.currentUserReviewRating && (
+          <div className={styles.reviewedBadge} title={`Você avaliou este filme com nota ${movie.currentUserReviewRating}`}>
+            <BadgeCheck size={14} />
+            <span>Avaliado</span>
+          </div>
+        )}
 
         {movie.imageUrl && !imageError ? (
           <img
@@ -28,6 +36,8 @@ const MovieCard = ({ movie }) => {
             className={styles.poster}
             onError={() => setImageError(true)}
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
           />
         ) : (
           <div className={styles.posterPlaceholder}>

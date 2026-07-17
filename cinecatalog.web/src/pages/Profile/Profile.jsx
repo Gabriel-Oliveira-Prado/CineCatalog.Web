@@ -207,16 +207,12 @@ const Profile = () => {
               onChange={handleFileChange}
             />
             <div className={styles.avatar}>
-              {avatarUrlPreview && !avatarImgError ? (
-                <img
-                  src={avatarUrlPreview}
-                  alt={`Foto de perfil de ${user?.name || 'usuário'}`}
-                  className={styles.avatarImg}
-                  onError={() => setAvatarImgError(true)}
-                />
-              ) : (
-                getInitials(user?.name)
-              )}
+              <img
+                src={avatarUrlPreview && !avatarImgError ? avatarUrlPreview : '/default-avatar.png'}
+                alt={`Foto de perfil de ${user?.name || 'usuário'}`}
+                className={styles.avatarImg}
+                onError={() => setAvatarImgError(true)}
+              />
               <div className={styles.avatarOverlay}>
                 <Camera size={18} />
                 <span>Alterar</span>
