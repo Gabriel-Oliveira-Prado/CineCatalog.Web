@@ -9,7 +9,7 @@ import { Button, Input } from '../../components/ui';
 import styles from './Register.module.css';
 
 // Schema de validação Zod espelhando as regras de validação estritas da API do CineCatalog
-const registerSchema = z.object({
+export const registerSchema = z.object({
   name: z
     .string()
     .min(1, 'O nome de usuário é obrigatório.')

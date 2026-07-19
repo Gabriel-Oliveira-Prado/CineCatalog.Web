@@ -9,11 +9,11 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { Button, Input } from '../../components/ui';
+import { Button, Input, Skeleton } from '../../components/ui';
 import styles from './Profile.module.css';
 
 // Schema de validação Zod para atualização cadastral
-const profileSchema = z.object({
+export const profileSchema = z.object({
   name: z
     .string()
     .min(1, 'O nome de usuário é obrigatório.')
@@ -31,7 +31,7 @@ const profileSchema = z.object({
 });
 
 // Schema de validação Zod para alteração de senha (espelhando as regras de validação estritas da API)
-const passwordSchema = z
+export const passwordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Informe sua senha atual.'),
     newPassword: z
@@ -50,7 +50,7 @@ const passwordSchema = z
   });
 
 const Profile = () => {
-  const { user, updateProfileState, logout } = useAuth();
+  const { user, loading, updateProfileState, logout } = useAuth();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState('');
   const [avatarImgError, setAvatarImgError] = useState(false);
@@ -264,6 +264,47 @@ const Profile = () => {
       year: 'numeric',
     });
   };
+
+  if (loading || !user) {
+    return (
+      <div className={`page-fade-in ${styles.container}`}>
+        <header className={styles.headerSection}>
+          <Skeleton variant="title" width="300px" />
+          <Skeleton variant="text" width="500px" />
+        </header>
+
+        <div className={styles.profileGrid}>
+          <div className={styles.sidebarCard}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+              <Skeleton variant="circle" width="90px" height="90px" />
+            </div>
+            <Skeleton variant="text" width="60%" style={{ margin: '0 auto 8px', display: 'block' }} />
+            <Skeleton variant="text" width="80%" style={{ margin: '0 auto 20px', display: 'block' }} />
+            <div className={styles.divider}></div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Skeleton variant="text" width="40%" style={{ marginBottom: '8px' }} />
+              <Skeleton variant="text" width="60%" />
+            </div>
+          </div>
+
+          <div className={styles.formCard}>
+            <Skeleton variant="title" width="200px" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+              <div>
+                <Skeleton variant="text" width="100px" style={{ marginBottom: '8px' }} />
+                <Skeleton variant="rect" height="48px" />
+              </div>
+              <div>
+                <Skeleton variant="text" width="100px" style={{ marginBottom: '8px' }} />
+                <Skeleton variant="rect" height="48px" />
+              </div>
+              <Skeleton variant="rect" width="150px" height="40px" style={{ marginTop: '10px' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`page-fade-in ${styles.container}`}>

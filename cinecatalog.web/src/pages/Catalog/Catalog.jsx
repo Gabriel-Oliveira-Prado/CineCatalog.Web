@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Search, SlidersHorizontal, Trash2, Film, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Input, Button, Card, Skeleton, Spinner } from '../../components/ui';
 import MovieCard from '../../components/MovieCard/MovieCard';
+import MovieCardSkeleton from '../../components/MovieCard/MovieCardSkeleton';
 import styles from './Catalog.module.css';
 
 const Catalog = () => {
@@ -83,7 +84,7 @@ const Catalog = () => {
       const response = await api.get('/api/Movies', { params });
       return response.data;
     },
-    keepPreviousData: true, // Mantém dados antigos enquanto busca novos (evita layout shift)
+    placeholderData: keepPreviousData,
   });
 
   const clearFilters = () => {
@@ -241,18 +242,8 @@ const Catalog = () => {
       {/* Grid de Exibição ou Estados */}
       {isLoading ? (
         <div className={styles.grid}>
-          {[...Array(8)].map((_, i) => (
-            <Card key={i} padding="none" style={{ borderRadius: 'var(--border-radius-lg)', overflow: 'hidden' }}>
-              <Skeleton variant="rect" height="330px" />
-              <div style={{ padding: '16px' }}>
-                <Skeleton variant="text" width="60%" height="16px" style={{ marginBottom: '12px' }} />
-                <Skeleton variant="text" width="90%" height="24px" style={{ marginBottom: '16px' }} />
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <Skeleton variant="text" width="45%" height="14px" />
-                  <Skeleton variant="text" width="45%" height="14px" />
-                </div>
-              </div>
-            </Card>
+          {[...Array(pageSize)].map((_, i) => (
+            <MovieCardSkeleton key={i} />
           ))}
         </div>
       ) : isError ? (

@@ -8,7 +8,7 @@ import MovieCard from '../../components/MovieCard/MovieCard';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Home.module.css';
 import { slugify } from '../../utils/slugify';
-import cardStyles from '../../components/MovieCard/MovieCard.module.css';
+import MovieCardSkeleton from '../../components/MovieCard/MovieCardSkeleton';
 
 const HIGHLIGHTS_PAGE_SIZE = 12;
 const FEATURED_MOVIES_COUNT = 5;
@@ -159,23 +159,7 @@ const Home = () => {
         {isLoading ? (
           <div className={styles.grid}>
             {[...Array(HIGHLIGHTS_PAGE_SIZE)].map((_, i) => (
-              <Card key={i} padding="none" style={{ borderRadius: 'var(--border-radius-lg)', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div className={cardStyles.posterWrapper}>
-                  <Skeleton variant="rect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
-                </div>
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
-                    <Skeleton variant="text" width="40px" height="12px" />
-                    <Skeleton variant="text" width="50px" height="12px" />
-                  </div>
-                  <Skeleton variant="text" width="80%" height="16px" style={{ marginBottom: '8px', marginTop: '4px' }} />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: 'auto', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.03)' }}>
-                    <Skeleton variant="text" width="80%" height="12px" />
-                    <Skeleton variant="text" width="60%" height="12px" />
-                    <Skeleton variant="text" width="90%" height="12px" style={{ gridColumn: 'span 2' }} />
-                  </div>
-                </div>
-              </Card>
+              <MovieCardSkeleton key={i} />
             ))}
           </div>
         ) : isError ? (

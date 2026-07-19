@@ -9,7 +9,7 @@ import { Button, Input } from '../../components/ui';
 import styles from './Login.module.css';
 
 // Schema de validação Zod para o formulário de login
-const loginSchema = z.object({
+export const loginSchema = z.object({
   email: z
     .string()
     .min(1, 'O e-mail é obrigatório.')

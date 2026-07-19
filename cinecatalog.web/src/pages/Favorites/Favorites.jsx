@@ -5,6 +5,7 @@ import { Heart, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { Card, Button, Skeleton } from '../../components/ui';
 import MovieCard from '../../components/MovieCard/MovieCard';
+import MovieCardSkeleton from '../../components/MovieCard/MovieCardSkeleton';
 import styles from './Favorites.module.css';
 
 const Favorites = () => {
@@ -27,17 +28,7 @@ const Favorites = () => {
       {isLoading ? (
         <div className={styles.grid}>
           {[...Array(4)].map((_, i) => (
-            <Card key={i} padding="none" style={{ borderRadius: 'var(--border-radius-lg)', overflow: 'hidden' }}>
-              <Skeleton variant="rect" height="330px" />
-              <div style={{ padding: '16px' }}>
-                <Skeleton variant="text" width="60%" height="16px" style={{ marginBottom: '12px' }} />
-                <Skeleton variant="text" width="90%" height="24px" style={{ marginBottom: '16px' }} />
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <Skeleton variant="text" width="45%" height="14px" />
-                  <Skeleton variant="text" width="45%" height="14px" />
-                </div>
-              </div>
-            </Card>
+            <MovieCardSkeleton key={i} />
           ))}
         </div>
       ) : isError ? (
