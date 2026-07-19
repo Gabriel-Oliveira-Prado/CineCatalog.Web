@@ -31,6 +31,11 @@ const Catalog = () => {
     setPage(1);
   }, [debouncedSearch, genre, director, releaseYear, minRating, minDuration, sortBy, isDescending]);
 
+  // Rola para o topo da página suavemente quando a página muda
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [page]);
+
   // Query para buscar a lista de Gêneros (para o filtro dropdown)
   const { data: genresData } = useQuery({
     queryKey: ['genres'],
@@ -48,16 +53,16 @@ const Catalog = () => {
   // Query para buscar a lista de Filmes com paginação e filtros
   const { data: moviesData, isLoading, isError, error, isFetching } = useQuery({
     queryKey: [
-      'movies', 
-      debouncedSearch, 
-      genre, 
-      director, 
-      releaseYear, 
-      minRating, 
-      minDuration, 
-      sortBy, 
-      isDescending, 
-      page, 
+      'movies',
+      debouncedSearch,
+      genre,
+      director,
+      releaseYear,
+      minRating,
+      minDuration,
+      sortBy,
+      isDescending,
+      page,
       pageSize
     ],
     queryFn: async () => {
@@ -92,7 +97,7 @@ const Catalog = () => {
     setIsDescending(true);
   };
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     searchInput || genre || director || releaseYear || minRating || minDuration;
 
   // Cálculos de paginação
@@ -285,7 +290,7 @@ const Catalog = () => {
               >
                 &laquo;
               </button>
-              
+
               <span className={styles.pageIndicator}>
                 Página {page} de {totalPages} ({totalCount} filmes)
               </span>
