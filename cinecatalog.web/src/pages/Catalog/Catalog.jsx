@@ -11,7 +11,7 @@ const Catalog = () => {
   // Estados de busca e paginação
   const [searchInput, setSearchInput] = useState('');
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(100);
+  const [pageSize] = useState(24);
   const [showFilters, setShowFilters] = useState(false);
 
   // Estados de filtros
@@ -230,13 +230,6 @@ const Catalog = () => {
               </Button>
             </div>
           )}
-        </div>
-      )}
-
-      {isFetching && searchInput && (
-        <div className={styles.searchingTmdbAlert}>
-          <Spinner size="sm" variant="accent" className={styles.spinnerMini} />
-          <span>Buscando na base do TMDb e sincronizando com o catálogo para "<strong>{searchInput}</strong>"... Novos filmes podem aparecer a qualquer momento.</span>
         </div>
       )}
 

@@ -82,6 +82,7 @@ const MovieDetails = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movie', id] });
+      queryClient.invalidateQueries({ queryKey: ['movies'] });
       setCommentInput('');
       setRatingInput(5);
       toast.success('Avaliação enviada com sucesso!');
@@ -99,6 +100,7 @@ const MovieDetails = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movie', id] });
+      queryClient.invalidateQueries({ queryKey: ['movies'] });
       setIsEditing(false);
       setEditingReview(null);
       toast.success('Avaliação atualizada!');
@@ -115,6 +117,7 @@ const MovieDetails = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movie', id] });
+      queryClient.invalidateQueries({ queryKey: ['movies'] });
       toast.success('Avaliação removida.');
     },
     onError: (err) => {

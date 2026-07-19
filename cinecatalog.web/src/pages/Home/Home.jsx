@@ -80,9 +80,6 @@ const Home = () => {
 
       {isTrendingLoading ? (
         <section className={styles.featured} aria-label="Carregando destaques">
-          <div className={styles.featuredHeader}>
-            <Skeleton variant="text" width="200px" height="28px" />
-          </div>
           <div className={styles.featuredCard}>
             <div className={styles.featuredContent}>
               <Skeleton variant="text" width="120px" height="14px" style={{ marginBottom: '12px' }} />
@@ -96,10 +93,6 @@ const Home = () => {
         </section>
       ) : featuredMovie ? (
         <section className={styles.featured} aria-label="Filmes em destaque">
-          <div className={styles.featuredHeader}>
-            <h2 className={styles.featuredTitle}>Destaque da semana</h2>
-          </div>
-
           <article className={styles.featuredCard} aria-live="polite">
             {(featuredMovie.backdropUrl || featuredMovie.imageUrl) && (
               <img

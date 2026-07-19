@@ -167,3 +167,19 @@
   color: var(--primary-color);
   flex-shrink: 0;
 }
+
+@media (max-width: 576px) {
+  .reviewedBadge span {
+    display: none;
+  }
+  .reviewedBadge {
+    padding: 6px;
+    border-radius: 50%;
+    left: 10px;
+    top: 10px;
+  }
+  .ratingBadge {
+    right: 10px;
+    top: 10px;
+  }
+}

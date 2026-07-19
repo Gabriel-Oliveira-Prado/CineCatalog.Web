@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMutation } from '@tanstack/react-query';
-import { User, Mail, Calendar, Save, KeyRound, Camera } from 'lucide-react';
+import { User, Mail, Calendar, Save, KeyRound, Camera, Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
@@ -29,13 +30,18 @@ const profileSchema = z.object({
     .or(z.literal('')),
 });
 
-// Schema de validação Zod para alteração de senha
+// Schema de validação Zod para alteração de senha (espelhando as regras de validação estritas da API)
 const passwordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Informe sua senha atual.'),
     newPassword: z
       .string()
-      .min(6, 'A nova senha deve ter pelo menos 6 caracteres.'),
+      .min(1, 'A nova senha é obrigatória.')
+      .min(8, 'A nova senha deve conter no mínimo 8 caracteres.')
+      .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula.')
+      .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula.')
+      .regex(/[0-9]/, 'A senha deve conter pelo menos um número.')
+      .regex(/[^a-zA-Z0-9]/, 'A senha deve conter pelo menos um caractere especial.'),
     confirmPassword: z.string().min(1, 'Confirme a nova senha.'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -44,7 +50,8 @@ const passwordSchema = z
   });
 
 const Profile = () => {
-  const { user, updateProfileState } = useAuth();
+  const { user, updateProfileState, logout } = useAuth();
+  const navigate = useNavigate();
   const [apiError, setApiError] = useState('');
   const [avatarImgError, setAvatarImgError] = useState(false);
 
@@ -140,8 +147,6 @@ const Profile = () => {
   });
 
   // Mutation para alterar a senha
-  // ATENÇÃO: depende do endpoint PUT/POST /api/Auth/change-password na API
-  // (ainda não existe no contrato atual — ver observação enviada no chat)
   const changePasswordMutation = useMutation({
     mutationFn: async (data) => {
       const response = await api.put('/api/Auth/change-password', {
@@ -151,13 +156,70 @@ const Profile = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast.success('Senha alterada com sucesso!');
+      Swal.fire({
+        title: 'Senha alterada!',
+        text: 'Sua senha foi alterada com sucesso.',
+        icon: 'success',
+        confirmButtonColor: 'var(--primary-color)',
+        background: 'var(--surface-color)',
+        color: 'var(--text-main)',
+      });
       resetPasswordForm();
     },
     onError: (err) => {
       toast.error(err.message || 'Erro ao alterar a senha.');
     },
   });
+
+  // Mutation para excluir a conta
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.delete('/api/Auth/me');
+      return response.data;
+    },
+    onSuccess: () => {
+      logout();
+      navigate('/');
+      toast.success('Sua conta foi excluída permanentemente.');
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Erro ao excluir a conta.');
+    },
+  });
+
+  const handleDeleteAccount = () => {
+    Swal.fire({
+      title: 'Deseja excluir sua conta?',
+      text: 'Esta ação é definitiva e não poderá ser desfeita.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--color-error)',
+      cancelButtonColor: 'var(--text-muted)',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar',
+      background: 'var(--surface-color)',
+      color: 'var(--text-main)',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Tem certeza absoluta?',
+          text: 'Todos os seus comentários e favoritos salvos serão apagados para sempre.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: 'var(--color-error)',
+          cancelButtonColor: 'var(--text-muted)',
+          confirmButtonText: 'Sim, excluir conta permanentemente!',
+          cancelButtonText: 'Cancelar',
+          background: 'var(--surface-color)',
+          color: 'var(--text-main)',
+        }).then((secondResult) => {
+          if (secondResult.isConfirmed) {
+            deleteAccountMutation.mutate();
+          }
+        });
+      }
+    });
+  };
 
   const onSubmit = (data) => {
     updateProfileMutation.mutate({
@@ -167,7 +229,22 @@ const Profile = () => {
   };
 
   const onPasswordSubmit = (data) => {
-    changePasswordMutation.mutate(data);
+    Swal.fire({
+      title: 'Confirmar alteração de senha?',
+      text: 'Tem certeza de que deseja alterar sua senha atual?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--primary-color)',
+      cancelButtonColor: 'var(--color-error)',
+      confirmButtonText: 'Sim, alterar!',
+      cancelButtonText: 'Cancelar',
+      background: 'var(--surface-color)',
+      color: 'var(--text-main)',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        changePasswordMutation.mutate(data);
+      }
+    });
   };
 
   const getInitials = (fullName) => {
@@ -336,6 +413,26 @@ const Profile = () => {
             </Button>
           </div>
         </form>
+      </div>
+
+      {/* Zona de Perigo / Excluir Conta */}
+      <div className={styles.deleteCard}>
+        <h3 className={styles.dangerTitle}>Zona de Perigo</h3>
+        <p className={styles.dangerText}>
+          A exclusão de conta é permanente. Todos os seus dados, incluindo reviews e favoritos, serão removidos imediatamente de nossos servidores.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <Button
+            type="button"
+            variant="outline"
+            style={{ borderColor: 'var(--color-error)', color: 'var(--color-error)' }}
+            onClick={handleDeleteAccount}
+            isLoading={deleteAccountMutation.isPending}
+            leftIcon={<Trash2 size={18} />}
+          >
+            Excluir Minha Conta
+          </Button>
+        </div>
       </div>
     </div>
   );
