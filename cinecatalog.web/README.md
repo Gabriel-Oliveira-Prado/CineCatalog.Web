@@ -50,3 +50,16 @@ src/
 ├── routes/      # proteção de rotas
 └── services/    # cliente da API
 ```
+
+## Decisões Técnicas
+
+### Autenticação
+
+O token de acesso é armazenado em `localStorage` por simplicidade de
+implementação com a API stateless via header `Authorization: Bearer`.
+Em um cenário de produção real, a alternativa mais segura seria usar
+cookies `httpOnly` (protege contra roubo de token via XSS), o que exigiria
+a API devolver `Set-Cookie` no login/refresh em vez de JSON, além de
+configurar `SameSite`/CSRF — uma mudança de arquitetura maior que ficou
+fora do escopo deste projeto de portfólio.
+

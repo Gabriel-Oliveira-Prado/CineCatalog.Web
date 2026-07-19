@@ -198,17 +198,49 @@ const MovieDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="page-fade-in" style={{ padding: '60px 0' }}>
-        <Skeleton variant="rect" height="380px" style={{ marginBottom: '40px' }} />
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '48px' }}>
-          <div>
-            <Skeleton variant="title" width="40%" />
-            <Skeleton variant="text" />
-            <Skeleton variant="text" />
-            <Skeleton variant="text" width="80%" />
+      <div className={`page-fade-in ${styles.container}`}>
+        <div className={styles.backLink} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+          <ArrowLeft size={16} />
+          <span>Voltar para o Catálogo</span>
+        </div>
+        
+        <section className={styles.banner}>
+          <div className={styles.bannerOverlay}></div>
+          <div className={styles.headerContent}>
+            <div className={styles.posterWrapper}>
+              <Skeleton variant="rect" height="345px" />
+            </div>
+            <div className={styles.mainInfo}>
+              <Skeleton variant="title" width="60%" />
+              <div style={{ display: 'flex', gap: '16px', marginTop: '16px', marginBottom: '16px' }}>
+                <Skeleton variant="text" width="60px" />
+                <Skeleton variant="text" width="80px" />
+                <Skeleton variant="text" width="80px" />
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Skeleton variant="text" width="80px" />
+                <Skeleton variant="text" width="80px" />
+              </div>
+            </div>
           </div>
-          <div>
-            <Skeleton variant="rect" height="200px" />
+        </section>
+
+        <div className={styles.bodyGrid} style={{ marginTop: '80px' }}>
+          <div className={styles.leftCol}>
+            <div>
+              <Skeleton variant="title" width="150px" />
+              <Skeleton variant="text" width="100%" />
+              <Skeleton variant="text" width="100%" />
+              <Skeleton variant="text" width="80%" />
+            </div>
+            <div style={{ marginTop: '30px' }}>
+              <Skeleton variant="title" width="150px" />
+              <Skeleton variant="text" width="90%" />
+            </div>
+          </div>
+          <div className={styles.rightCol}>
+            <Skeleton variant="rect" height="200px" style={{ borderRadius: 'var(--border-radius-lg)', marginBottom: '20px' }} />
+            <Skeleton variant="rect" height="150px" style={{ borderRadius: 'var(--border-radius-lg)' }} />
           </div>
         </div>
       </div>
