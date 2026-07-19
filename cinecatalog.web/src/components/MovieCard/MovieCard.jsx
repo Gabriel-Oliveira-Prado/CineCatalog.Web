@@ -85,4 +85,3 @@ const MovieCard = ({ movie }) => {
 };
 
 export default memo(MovieCard);
-

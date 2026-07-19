@@ -62,4 +62,3 @@ cookies `httpOnly` (protege contra roubo de token via XSS), o que exigiria
 a API devolver `Set-Cookie` no login/refresh em vez de JSON, além de
 configurar `SameSite`/CSRF — uma mudança de arquitetura maior que ficou
 fora do escopo deste projeto de portfólio.
-

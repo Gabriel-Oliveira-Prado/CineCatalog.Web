@@ -92,10 +92,10 @@ api.interceptors.response.use(
           // Limpa tokens se falhar o refresh
           localStorage.removeItem('@CineCatalog:accessToken');
           localStorage.removeItem('@CineCatalog:refreshToken');
-          
+
           // Força redirecionamento ou evento de logout
           window.dispatchEvent(new Event('auth:logout'));
-          
+
           return Promise.reject(parseError(refreshError));
         }
       } else {
@@ -123,8 +123,8 @@ function parseError(error) {
     if (data.title || data.detail) {
       customError.title = data.title || customError.title;
       customError.message = data.detail || customError.message;
-    } 
-    
+    }
+
     // Se for erro de validação (FluentValidation) que retorna dicionário de erros
     // O ASP.NET retorna validation errors em data.errors ou no próprio data se retornar BadRequest(validationResult.ToDictionary())
     if (data.errors) {

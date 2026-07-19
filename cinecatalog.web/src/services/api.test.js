@@ -46,7 +46,7 @@ afterAll(() => server.close());
 describe('api service interceptors', () => {
   it('should attach Authorization header when accessToken exists in localStorage', async () => {
     localStorage.setItem('@CineCatalog:accessToken', 'new-valid-token');
-    
+
     const response = await api.get('/api/Auth/me');
     expect(response.data.name).toBe('Gabriel');
   });

@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false, // Evita re-buscas desnecessárias ao trocar de aba
       retry: 1, // Tenta novamente apenas uma vez em caso de falha
-      staleTime: 1000 * 60 * 5, // Cache dura 5 minutos
+      staleTime: 0, // Cache expira imediatamente (garante dados sempre frescos) // Aumentar se nao quiser que atualize o catalogo instantaneamente
     },
   },
 });
@@ -24,7 +24,7 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <App />
       </AuthProvider>
-      
+
       {/* Sistema de Toasts estilizado para o tema "Cinema à noite" */}
       <Toaster
         position="top-right"
